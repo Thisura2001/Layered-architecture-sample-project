@@ -14,7 +14,6 @@ public class SqlUtil {
         for (int i=0;i < ob.length;i++){
             pstm.setObject((i+1),ob[i]);
         }
-
         if (sql.startsWith("SELECT")){
             return (T) pstm.executeQuery();
         }else {
