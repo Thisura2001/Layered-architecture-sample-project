@@ -1,5 +1,9 @@
 package com.example.layeredarchitecture.bo.impl;
 
+import com.example.layeredarchitecture.Entity.Customer;
+import com.example.layeredarchitecture.Entity.Item;
+import com.example.layeredarchitecture.Entity.Order;
+import com.example.layeredarchitecture.Entity.OrderDetail;
 import com.example.layeredarchitecture.bo.Custom.PlaceOrderBo;
 import com.example.layeredarchitecture.dao.DaoFactory;
 import com.example.layeredarchitecture.dao.Impl.*;
@@ -8,10 +12,10 @@ import com.example.layeredarchitecture.dao.custom.ItemDAO;
 import com.example.layeredarchitecture.dao.custom.OrderDAO;
 import com.example.layeredarchitecture.dao.custom.OrderDetailDAO;
 import com.example.layeredarchitecture.db.DBConnection;
-import com.example.layeredarchitecture.model.CustomerDTO;
-import com.example.layeredarchitecture.model.ItemDTO;
-import com.example.layeredarchitecture.model.OrderDTO;
-import com.example.layeredarchitecture.model.OrderDetailDTO;
+import com.example.layeredarchitecture.dto.CustomerDTO;
+import com.example.layeredarchitecture.dto.ItemDTO;
+import com.example.layeredarchitecture.dto.OrderDTO;
+import com.example.layeredarchitecture.dto.OrderDetailDTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -46,10 +50,10 @@ public class PlaceOrderBoImpl implements PlaceOrderBo {
 
 
             //Save the Order to the order table
-            boolean b2 = orderDAO.save(new OrderDTO(orderId, orderDate, customerId));
+            boolean isSaved = orderDAO.save(new Order(orderId,orderDate,customerId));
 
 
-            if (!b2) {
+            if (!isSaved) {
                 connection.rollback();
                 connection.setAutoCommit(true);
                 return false;
@@ -57,22 +61,25 @@ public class PlaceOrderBoImpl implements PlaceOrderBo {
             // add data to the Order Details table
 
 
-            for (OrderDetailDTO detail : orderDetails) {
-                boolean b3 = orderDetailsDAO.save(detail);
-                if (!b3) {
-                    connection.rollback();
-                    connection.setAutoCommit(true);
-                    return false;
-                }
+
+        for (OrderDetailDTO detail : orderDetails) {
+
+            boolean isOk = orderDetailsDAO.save(new OrderDetail(orderId, detail.getItemCode(), detail.getQty(), detail.getUnitPrice()));
+
+            if (!isOk) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                return false;
+            }
 
 
                 //Search & Update Item
-                ItemDTO item = findItem(detail.getItemCode());
-                item.setQtyOnHand(item.getQtyOnHand() - detail.getQty());
+            ItemDTO item = findItem(detail.getItemCode());
+            item.setQtyOnHand(item.getQtyOnHand() - detail.getQty());
 
 
                 //update item
-                boolean b = itemDAO.update(new ItemDTO(item.getCode(), item.getDescription(), item.getUnitPrice(), item.getQtyOnHand()));
+                boolean b = itemDAO.update(new Item(item.getCode(), item.getDescription(), item.getUnitPrice(), item.getQtyOnHand()));
 
 
                 if (!b) {
@@ -87,25 +94,21 @@ public class PlaceOrderBoImpl implements PlaceOrderBo {
             return true;
         }
         @Override
-        public ItemDTO findItem(String code) {
-            try {
-                return itemDAO.search(code);
-            } catch (SQLException e) {
-                throw new RuntimeException("Failed to find the Item " + code, e);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
+        public ItemDTO findItem(String itemCode) throws SQLException, ClassNotFoundException {
+            Item item = itemDAO.search(itemCode);
+            return new ItemDTO(item.getCode(), item.getDescription(), item.getUnitPrice(), item.getQtyOnHand());
         }
 
     @Override
     public CustomerDTO searchCustomer(String s) throws SQLException, ClassNotFoundException {
-        return customerDAO.search(s);
+        Customer customer = customerDAO.search(s);
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getAddress());
     }
 
     @Override
     public ItemDTO searchItem(String s) throws SQLException, ClassNotFoundException {
-        return itemDAO.search(s);
+        Item item = itemDAO.search(s);
+        return new ItemDTO(item.getCode(), item.getDescription(), item.getUnitPrice(), item.getQtyOnHand());
     }
 
     @Override
@@ -125,11 +128,24 @@ public class PlaceOrderBoImpl implements PlaceOrderBo {
 
     @Override
     public ArrayList<CustomerDTO> getAllCustomerId() throws SQLException, ClassNotFoundException {
-        return customerDAO.getAll();
-    }
+        ArrayList<Customer> allCustomers = customerDAO.getAll();
+        ArrayList<CustomerDTO> customerDTOS = new ArrayList<>();
 
+        for (Customer customer : allCustomers) {
+            customerDTOS.add(new CustomerDTO(customer.getId(), customer.getName(), customer.getAddress()));
+        }
+
+        return customerDTOS;
+    }
     @Override
     public ArrayList<ItemDTO> getAllItemCode() throws SQLException, ClassNotFoundException {
-        return itemDAO.getAll();
+        ArrayList<Item> allitems = itemDAO.getAll();
+        ArrayList<ItemDTO> itemDTOS = new ArrayList<>();
+
+        for (Item item : allitems) {
+            itemDTOS.add(new ItemDTO(item.getCode(), item.getDescription(), item.getUnitPrice(), item.getQtyOnHand()));
+        }
+
+        return itemDTOS;
     }
 }

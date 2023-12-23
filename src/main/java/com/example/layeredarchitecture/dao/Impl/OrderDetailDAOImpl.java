@@ -1,32 +1,26 @@
 package com.example.layeredarchitecture.dao.Impl;
 
+import com.example.layeredarchitecture.Entity.OrderDetail;
 import com.example.layeredarchitecture.dao.SqlUtil;
 import com.example.layeredarchitecture.dao.custom.OrderDetailDAO;
-import com.example.layeredarchitecture.model.OrderDetailDTO;
+import com.example.layeredarchitecture.dto.OrderDTO;
+import com.example.layeredarchitecture.dto.OrderDetailDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OrderDetailDAOImpl implements OrderDetailDAO {
     @Override
-    public ArrayList<OrderDetailDTO> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<OrderDetail> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public boolean save(OrderDetailDTO dto) throws SQLException, ClassNotFoundException {
+    public boolean save(OrderDetail dto) throws SQLException, ClassNotFoundException {
         return SqlUtil.execute("INSERT INTO OrderDetails (oid, itemCode, unitPrice, qty) VALUES (?,?,?,?)",dto.getOid(),dto.getItemCode(),dto.getUnitPrice(),dto.getQty());
-//        Connection connection = DBConnection.getDbConnection().getConnection();
-//        PreparedStatement stm = connection.prepareStatement("INSERT INTO OrderDetails (oid, itemCode, unitPrice, qty) VALUES (?,?,?,?)");
-//        stm.setString(1, dto.getOid());
-//        stm.setString(2, dto.getItemCode());
-//        stm.setBigDecimal(3, dto.getUnitPrice());
-//        stm.setInt(4, dto.getQty());
-//        return stm.executeUpdate()>0;
     }
-
     @Override
-    public boolean update(OrderDetailDTO dto) throws SQLException, ClassNotFoundException {
+    public boolean update(OrderDetail entity) throws SQLException, ClassNotFoundException {
         return false;
     }
 
@@ -46,7 +40,7 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     }
 
     @Override
-    public OrderDetailDTO search(String id) throws SQLException, ClassNotFoundException {
+    public OrderDetail search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

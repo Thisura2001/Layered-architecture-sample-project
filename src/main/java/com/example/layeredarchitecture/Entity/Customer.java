@@ -1,17 +1,14 @@
-package com.example.layeredarchitecture.model;
+package com.example.layeredarchitecture.Entity;
 
-import java.io.Serializable;
-
-
-public class CustomerDTO implements Serializable {
+public class Customer {
     private String id;
     private String name;
     private String address;
 
-    public CustomerDTO() {
+    public Customer() {
     }
 
-    public CustomerDTO(String id, String name, String address) {
+    public Customer(String id, String name, String address) {
         this.id = id;
         this.name = name;
         this.address = address;

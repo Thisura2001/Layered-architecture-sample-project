@@ -1,10 +1,10 @@
 package com.example.layeredarchitecture.bo.impl;
 
+import com.example.layeredarchitecture.Entity.Customer;
 import com.example.layeredarchitecture.bo.Custom.CustomerBo;
 import com.example.layeredarchitecture.dao.DaoFactory;
-import com.example.layeredarchitecture.dao.Impl.CustomerDAOImpl;
 import com.example.layeredarchitecture.dao.custom.CustomerDAO;
-import com.example.layeredarchitecture.model.CustomerDTO;
+import com.example.layeredarchitecture.dto.CustomerDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,17 +13,21 @@ public class CustomerBoImpl implements CustomerBo {
     CustomerDAO customerDAO = (CustomerDAO) DaoFactory.getDaoFactory().getDAO(DaoFactory.DAOType.CUSTOMER);
     @Override
     public ArrayList<CustomerDTO> getAllCustomer() throws SQLException, ClassNotFoundException {
-        return customerDAO.getAll();
+        ArrayList<CustomerDTO>customerDTOS=new ArrayList<>();
+        ArrayList<Customer>customers=customerDAO.getAll();
+        for (Customer customer:customers) {
+            customerDTOS.add(new CustomerDTO(customer.getId(),customer.getName(),customer.getAddress()));
+        }
+        return customerDTOS;
+    }
+    @Override
+    public boolean saveCustomer(CustomerDTO dto) throws SQLException, ClassNotFoundException {
+        return customerDAO.save(new Customer(dto.getId(),dto.getName(),dto.getAddress()));
     }
 
     @Override
-    public boolean saveCustomer(CustomerDTO customerDTO) throws SQLException, ClassNotFoundException {
-        return customerDAO.save(customerDTO);
-    }
-
-    @Override
-    public boolean updateCustomer(CustomerDTO customerDTO) throws SQLException, ClassNotFoundException {
-        return customerDAO.update(customerDTO);
+    public boolean updateCustomer(CustomerDTO dto) throws SQLException, ClassNotFoundException {
+        return customerDAO.update(new Customer(dto.getId(),dto.getName(),dto.getAddress()));
     }
 
     @Override
@@ -32,7 +36,7 @@ public class CustomerBoImpl implements CustomerBo {
     }
 
     @Override
-    public String generateNewCustomerId() throws SQLException, ClassNotFoundException {
+    public String generateNewId() throws SQLException, ClassNotFoundException {
         return customerDAO.generateNewId();
     }
 

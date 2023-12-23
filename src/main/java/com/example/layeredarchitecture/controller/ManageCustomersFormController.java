@@ -2,7 +2,7 @@ package com.example.layeredarchitecture.controller;
 
 import com.example.layeredarchitecture.bo.BOFactory;
 import com.example.layeredarchitecture.bo.Custom.CustomerBo;
-import com.example.layeredarchitecture.model.CustomerDTO;
+import com.example.layeredarchitecture.dto.CustomerDTO;
 import com.example.layeredarchitecture.view.tdm.CustomerTM;
 import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
@@ -201,7 +201,7 @@ public class ManageCustomersFormController {
     }
 
     private String generateNewId() throws SQLException, ClassNotFoundException {
-        return  customerBo.generateNewCustomerId();
+        return  customerBo.generateNewId();
     }
     public boolean existCustomer(String id) throws SQLException, ClassNotFoundException {
         return customerBo.existCustomer(id);

@@ -1,30 +1,31 @@
 package com.example.layeredarchitecture.dao.Impl;
 
+import com.example.layeredarchitecture.Entity.Item;
 import com.example.layeredarchitecture.dao.SqlUtil;
 import com.example.layeredarchitecture.dao.custom.ItemDAO;
 import com.example.layeredarchitecture.db.DBConnection;
-import com.example.layeredarchitecture.model.ItemDTO;
+import com.example.layeredarchitecture.dto.OrderDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class ItemDAOImpl implements ItemDAO {
     @Override
-    public  ArrayList<ItemDTO> getAll() throws SQLException, ClassNotFoundException {
+    public  ArrayList<Item> getAll() throws SQLException, ClassNotFoundException {
         ResultSet rst   = SqlUtil.execute("SELECT * FROM Item");
         Connection connection = DBConnection.getDbConnection().getConnection();
         Statement stm = connection.createStatement();
         // rst = stm.executeQuery("SELECT * FROM Item");
-        ArrayList<ItemDTO> getAllItem=new ArrayList<>();
+        ArrayList<Item> getAllItem=new ArrayList<>();
         while (rst.next()) {
-           ItemDTO itemDTO=new ItemDTO(rst.getString(1),rst.getString(2),rst.getBigDecimal(3),rst.getInt(4));
-           getAllItem.add(itemDTO);
+           Item entity=new Item(rst.getString(1),rst.getString(2),rst.getBigDecimal(3),rst.getInt(4));
+           getAllItem.add(entity);
         }
         return getAllItem;
     }
     @Override
-    public boolean save(ItemDTO itemDTO) throws SQLException, ClassNotFoundException {
-        return SqlUtil.execute("INSERT INTO Item (code, description, unitPrice, qtyOnHand) VALUES (?,?,?,?)",itemDTO.getCode(),itemDTO.getDescription(),itemDTO.getUnitPrice(),itemDTO.getQtyOnHand());
+    public boolean save(Item entity) throws SQLException, ClassNotFoundException {
+        return SqlUtil.execute("INSERT INTO Item (code, description, unitPrice, qtyOnHand) VALUES (?,?,?,?)",entity.getCode(),entity.getDescription(),entity.getUnitPrice(),entity.getQtyOnHand());
 //        Connection connection = DBConnection.getDbConnection().getConnection();
 //        PreparedStatement pstm = connection.prepareStatement("INSERT INTO Item (code, description, unitPrice, qtyOnHand) VALUES (?,?,?,?)");
 //        pstm.setString(1, itemDTO.getCode());
@@ -43,8 +44,8 @@ public class ItemDAOImpl implements ItemDAO {
 //       return pstm.executeUpdate() >0;
     }
     @Override
-    public boolean update(ItemDTO itemDTO) throws SQLException, ClassNotFoundException {
-        return SqlUtil.execute("UPDATE Item SET description=?, unitPrice=?, qtyOnHand=? WHERE code=?",itemDTO.getDescription(),itemDTO.getUnitPrice(),itemDTO.getQtyOnHand(),itemDTO.getCode());
+    public boolean update(Item entity) throws SQLException, ClassNotFoundException {
+        return SqlUtil.execute("UPDATE Item SET description=?, unitPrice=?, qtyOnHand=? WHERE code=?",entity.getDescription(),entity.getUnitPrice(),entity.getQtyOnHand(),entity.getCode());
 
 //        Connection connection = DBConnection.getDbConnection().getConnection();
 //        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Item SET description=?, unitPrice=?, qtyOnHand=? WHERE code=?");
@@ -74,14 +75,14 @@ public class ItemDAOImpl implements ItemDAO {
         }
     }
     @Override
-    public ItemDTO search(String code) throws SQLException, ClassNotFoundException {
+    public Item search(String code) throws SQLException, ClassNotFoundException {
         ResultSet rst = SqlUtil.execute("SELECT * FROM Item WHERE code=?",code);
         //Connection connection = DBConnection.getDbConnection().getConnection();
        // PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Item WHERE code=?");
         //pstm.setString(1, code + "");
         //ResultSet rst = pstm.executeQuery();
         rst.next();
-        return new ItemDTO(code + "", rst.getString("description"), rst.getBigDecimal("unitPrice"), rst.getInt("qtyOnHand"));
+        return new Item(code + "", rst.getString("description"), rst.getBigDecimal("unitPrice"), rst.getInt("qtyOnHand"));
     }
 
 }
