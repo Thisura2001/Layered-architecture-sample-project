@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface ItemBo extends SuperBo {
-    ArrayList<ItemDTO> getAllCustomer() throws SQLException, ClassNotFoundException;
+    ArrayList<ItemDTO> getAllItem() throws SQLException, ClassNotFoundException;
 
     boolean deleteItem(String code) throws SQLException, ClassNotFoundException;
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class ItemBoImpl implements ItemBo {
     ItemDAO itemDAO = (ItemDAO) DaoFactory.getDaoFactory().getDAO(DaoFactory.DAOType.ITEM);
     @Override
-    public ArrayList<ItemDTO> getAllCustomer() throws SQLException, ClassNotFoundException {
+    public ArrayList<ItemDTO> getAllItem() throws SQLException, ClassNotFoundException {
         ArrayList<Item> items=itemDAO.getAll();
         ArrayList<ItemDTO> itemDTOS=new ArrayList<>();
         for (Item item:items) {
